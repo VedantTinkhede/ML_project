@@ -1,5 +1,5 @@
 import sys
-import logging
+from src.logger import logging 
 
 def error_message_details(error, error_detail:sys):
     _,_, exc_tb = error_detail.exc_info()  # exc_tb contains the sequence of function calls that led to the error
@@ -18,6 +18,6 @@ class CustomException(Exception):
 
     def __str__(self):
         return self.error_message  # Return the detailed error message when the exception is printed
-    
+
 
     
