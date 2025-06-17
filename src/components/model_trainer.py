@@ -43,7 +43,46 @@ class ModelTrainer:
                 'Gradient Boosting': GradientBoostingRegressor()
             }
 
-            model_report:dict = evaluate_models(X_train = X_train, y_train=y_train, X_test=X_test, y_test=y_test, models=models) 
+            params = {
+                'Linear Regression': {},
+
+                'Decision Tree': {
+                    'criterion': ["squared_error", "friedman_mse", "absolute_error", "poisson"],
+                    'max_depth': [3, 5, 7, 9]
+                },
+
+                'Random Forest': {
+                    'n_estimators': [10, 50, 100], 
+                    'max_depth': [3, 5, 7, 9]
+                },
+
+                'K-Neighbors': {
+                    'n_neighbors': [3, 5, 7, 10],
+                    'weights': ['uniform', 'distance']
+                },
+
+                'XGBoost': {
+                    'n_estimators': [50, 100],
+                    'learning_rate': [0.01, 0.1]
+                },
+
+                'CatBoost': {
+                    'iterations': [100, 200],
+                    'depth': [3, 5]
+                },
+
+                'AdaBoost': {
+                    'n_estimators': [50, 100],
+                    'learning_rate': [0.01, 0.1]
+                },
+
+                'Gradient Boosting': {
+                    'n_estimators': [50, 100],
+                    'learning_rate': [0.01, 0.1]
+                }
+            }
+
+            model_report:dict = evaluate_models(X_train = X_train, y_train=y_train, X_test=X_test, y_test=y_test, models=models, params=params) 
 
            
             best_model_score = max(sorted(model_report.values()))
