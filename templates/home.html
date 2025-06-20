@@ -99,9 +99,12 @@
             </fieldset>
         </form>
 
-        {% if results %}
-        <h2 class="mt-4">The prediction is: {{ results }}</h2>
-        {% endif %}
+    {% if math_score %}
+        <p><b>Predicted Math Score:</b> {{ math_score }}</p>
+        <p><b>Predicted Reading Score:</b> {{ reading_score }}</p>
+        <p><b>Predicted Writing Score:</b> {{ writing_score }}</p>
+    {% endif %}
+
     </div>
 </body>
 </html>

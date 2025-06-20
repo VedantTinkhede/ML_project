@@ -33,8 +33,20 @@ def predict_datapoint():
 
         predict_pipeline = PredictPipeline()
         results = predict_pipeline.predict(pred_df)
-        print(results)
-        return render_template('home.html', results=results[0]) # results[0] is the predicted marks in the subject: 'math score' while results[1] is the predicted marks in the subject: 'reading score'
+        print("results: ", results)
+        print(f"Results type: {type(results)}")
+        print(f"Results shape:", np.shape(results))
+
+
+        result = results[0] if isinstance(results, (list, np.ndarray)) else results
+        math_score = result[0]
+        reading_score = result[1]
+        writing_score = result[2]        
+        print(f"Math Score: {math_score}, Reading Score: {reading_score}, Writing Score: {writing_score}")
+        return render_template('home.html', 
+                               math_score=math_score, 
+                               reading_score=reading_score,
+                               writing_score=writing_score) 
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)

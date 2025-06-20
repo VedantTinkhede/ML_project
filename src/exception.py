@@ -2,13 +2,13 @@ import sys
 from src.logger import logging 
 
 def error_message_details(error, error_detail:sys):
-    _,_, exc_tb = error_detail.exc_info()  # exc_tb contains the sequence of function calls that led to the error
-    file_name = exc_tb.tb_frame.f_code.co_filename  # Get the file name where the error occurred
-
-    error_message = "Error occurred in script [{0}] line number [{1}] error message[{2}]".format(
-        file_name, exc_tb.tb_lineno, str(error) # Get the line number and error message
-    ) 
-    return error_message  # Return the formatted error message string
+    exc_type, exc_obj, exc_tb = error_detail.exc_info()
+    if exc_tb is not None:
+        file_name = exc_tb.tb_frame.f_code.co_filename
+        line_number = exc_tb.tb_lineno
+        return f"Error occurred in script [{file_name}] line number [{line_number}] error message[{error}]"
+    else:
+        return f"Error message: {error}"  # Return the formatted error message string
 
 
 class CustomException(Exception):

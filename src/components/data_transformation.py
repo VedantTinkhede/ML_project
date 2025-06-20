@@ -25,7 +25,9 @@ class DataTransformation:
         It creates a preprocessing pipeline for numerical and categorical features.
         """
         try:
-            numerical_features = ['writing_score', 'reading_score']
+            numerical_features = [] # they are math_score, reading_score, writing_score but they are target features, so we will not include them in the numerical features list
+            # if there were any numerical features excluding the ones above, they would be added here
+
             categorical_features = ["gender", "race_ethnicity", "parental_level_of_education", "lunch", "test_preparation_course"]
 
             # Numerical pipeline
@@ -74,12 +76,12 @@ class DataTransformation:
 
             preprocessor_obj = self.get_data_transformer_object()  # Get the preprocessing pipeline
 
-            target_column_name = "math_score"  # Specify the target column
+            target_column_name = ["math_score", "reading_score", "writing_score"]  # Specify the target column
 
-            input_features_train_df = train_df.drop(columns=[target_column_name], axis=1)  # Drop target column from training data
+            input_features_train_df = train_df.drop(columns=target_column_name, axis=1)  # Drop target column from training data
             target_feature_train_df = train_df[target_column_name]  # Extract target column from training data
 
-            input_features_test_df = test_df.drop(columns=[target_column_name], axis=1)  # Drop target column from testing data
+            input_features_test_df = test_df.drop(columns=target_column_name, axis=1)  # Drop target column from testing data
             target_feature_test_df = test_df[target_column_name]  # Extract target column from testing data
 
             logging.info("Applying transformations on training and testing data")
@@ -88,8 +90,32 @@ class DataTransformation:
             input_feature_train_arr = preprocessor_obj.fit_transform(input_features_train_df)
             input_feature_test_arr = preprocessor_obj.transform(input_features_test_df)
 
-            train_arr = np.c_[input_feature_train_arr, np.array(target_feature_train_df)]  # Combine input features and target for training data
-            test_arr = np.c_[input_feature_test_arr, np.array(target_feature_test_df)]  # Combine input features and target for testing data
+            if hasattr(input_feature_train_arr, "toarray"):
+                        input_feature_train_arr = input_feature_train_arr.toarray()
+            if hasattr(input_feature_test_arr, "toarray"):
+                        input_feature_test_arr = input_feature_test_arr.toarray()
+
+            # Confirm correct shapes before stacking
+            print("Train input shape:", input_feature_train_arr.shape)
+            print("Train target shape:", target_feature_train_df.shape)
+
+            print("Test input shape:", input_feature_test_arr.shape)
+            print("Test target shape:", target_feature_test_df.shape)
+
+            # Make sure both are 2D and have matching number of rows
+            if input_feature_train_arr.shape[0] != target_feature_train_df.shape[0]:
+                raise ValueError("Mismatch in number of samples for training data")
+
+            if input_feature_test_arr.shape[0] != target_feature_test_df.shape[0]:
+                raise ValueError("Mismatch in number of samples for testing data")
+
+            # Convert targets to NumPy arrays (2D)
+            train_targets = target_feature_train_df.values  # shape (800, 3)
+            test_targets = target_feature_test_df.values    # shape (200, 3)
+
+            train_arr = np.hstack((input_feature_train_arr, target_feature_train_df.values))
+            test_arr = np.hstack((input_feature_test_arr, target_feature_test_df.values))
+
 
             logging.info("Transformations applied successfully")
 
