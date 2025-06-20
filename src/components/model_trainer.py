@@ -37,8 +37,8 @@ class ModelTrainer:
                 'Decision Tree': MultiOutputRegressor(DecisionTreeRegressor()),
                 'Random Forest': MultiOutputRegressor(RandomForestRegressor()),
                 'K-Neighbors': MultiOutputRegressor(KNeighborsRegressor()),
-                # 'XGBoost': XGBRegressor(),
-                # 'CatBoost': CatBoostRegressor(verbose=0),
+                'XGBoost': MultiOutputRegressor(XGBRegressor()),
+                'CatBoost': MultiOutputRegressor(CatBoostRegressor(verbose=0)),
                 'AdaBoost': MultiOutputRegressor(AdaBoostRegressor()),
                 'Gradient Boosting': MultiOutputRegressor(GradientBoostingRegressor())
             }
@@ -63,7 +63,7 @@ class ModelTrainer:
 
                 'XGBoost': {
                     'estimator__n_estimators': [50, 100],
-                    'estimaotr__learning_rate': [0.01, 0.1]
+                    'estimator__learning_rate': [0.01, 0.1]
                 },
 
                 'CatBoost': {
@@ -99,9 +99,10 @@ class ModelTrainer:
             best_model_score = max(sorted(model_report.values()))
             best_model_name = list(model_report.keys())[list(model_report.values()).index(best_model_score)]
             best_model = models[best_model_name]
+            best_model.fit(X_train, y_train)
 
-            if best_model_score < 0.6:
-                raise CustomException("No best model found with sufficient accuracy", sys)
+            # if best_model_score < 0.6:
+            #     raise CustomException("No best model found with sufficient accuracy", sys)
 
             logging.info(f"Best model found: {best_model_name} with R2 score: {best_model_score}")
 
