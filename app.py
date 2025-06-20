@@ -29,11 +29,12 @@ def predict_datapoint():
         )
 
         pred_df = data.get_data_as_data_frame()
-        print(pred_df)
+        #print(pred_df)
 
         predict_pipeline = PredictPipeline()
         results = predict_pipeline.predict(pred_df)
-        return render_template('home.html', results=results[0])
+        print(results)
+        return render_template('home.html', results=results[0]) # results[0] is the predicted marks in the subject: 'math score' while results[1] is the predicted marks in the subject: 'reading score'
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)
